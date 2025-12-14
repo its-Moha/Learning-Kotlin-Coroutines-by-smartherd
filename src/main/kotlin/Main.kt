@@ -1,10 +1,9 @@
 package org.example
 
-import com.sun.source.util.Plugin
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.concurrent.thread
+import kotlinx.coroutines.runBlocking
 
 
 fun main() { // Executes on The main thread
@@ -15,19 +14,26 @@ fun main() { // Executes on The main thread
 
     GlobalScope.launch { //creates a background coroutine that runs on the background thread
         println("Fake work 2 starts: ${Thread.currentThread().name}")
-        delay(4000)
+        delay(1000) // does not block which is it operating
         println("Fake work 2 finishes: ${Thread.currentThread().name}")
     }
 
     // block the current main thread and wait for the coroutine to finish
-    Thread.sleep(6000)
+    runBlocking {
+        mySuspendFun(2000)
+    }
 
     println("Main Program Ends: ${Thread.currentThread().name}")
 }
 
+suspend fun mySuspendFun(time: Long){
+    delay(time)
+}
 
 
 
+//A coroutine is a smart job that can pause and continue later
+// without blocking everything.
 
 //when the user launches the app a default thread is created
 // and that thread is Known as main thread, and it is the life
