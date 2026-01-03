@@ -18,23 +18,28 @@ fun main() { // Executes on The main thread
     }
 
 
+    //Coroutine1
     GlobalScope.launch { //creates a background coroutine that runs on the background thread
         println("Fake work 2 starts: ${Thread.currentThread().name}")
-        delay(2000) // does not block which is it operating
+        mySuspend(2000) // does not block which is it operating
         println("Fake work 2 finishes: ${Thread.currentThread().name}")
     }
 
     // block the current main thread and wait for the coroutine to finish
-    runBlocking {
-        mySuspendFun(3000)
+    //Coroutine2
+    runBlocking { // creates a coroutine that blocks the current Main thread
+        mySuspend(3000)
     }
 
     println("Main Program Ends: ${Thread.currentThread().name}")
 }
 
-suspend fun mySuspendFun(time: Long){
+suspend fun mySuspend(time:Long) {
+
     delay(time)
+
 }
+
 
 
 
@@ -75,3 +80,19 @@ suspend fun mySuspendFun(time: Long){
 
 // with the memory conception of one thread using coroutines
 // you can perform so many operations
+
+
+// Thread.sleep function = it pauses the main thread and other threads
+// delay = when the thread launches it attach coroutines to it
+// so if we have five coroutines and one of them is paused the
+// others will not be blocked
+
+// function with " suspend " modifier is known as suspend function
+
+//suspend function are only allowed to be called from
+// a coroutine or another suspend function
+
+// they cannot be called from outside a coroutine
+
+//global Scope = creates a coroutine that does not block the main thread
+// runBlocking = blocks the thread in which it operates
