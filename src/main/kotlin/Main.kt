@@ -1,38 +1,52 @@
 package org.example
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import kotlin.concurrent.thread
 
 
-fun main() { // Executes on The main thread
+fun main() = runBlocking { // Executes on The main thread
 
     println("Main program starts: ${Thread.currentThread().name}")
 
     thread {
         println("Tread background work Starts : ${Thread.currentThread()}")
-        Thread.sleep(1000)
+        Thread.sleep(3000)
         println("Tread background work Finishes : ${Thread.currentThread()}")
     }
 
 
-    //Coroutine1
-    GlobalScope.launch { //creates a background coroutine that runs on the background thread
+    //launch
+    val job: Job = launch { //creates a background coroutine that runs on the background thread
         println("Fake work 2 starts: ${Thread.currentThread().name}")
-        mySuspend(2000) // does not block which is it operating
+        mySuspend(4000) // does not block which is it operating
         println("Fake work 2 finishes: ${Thread.currentThread().name}")
+    }
+
+    // async
+    val jobDeferred: Deferred<Int> = async { //creates a background coroutine that runs on the background thread
+        println("Fake work 3 starts: ${Thread.currentThread().name}")
+        mySuspend(3000) // does not block which is it operating
+        println("Fake work 3 finishes: ${Thread.currentThread().name}")
+        15
     }
 
     // block the current main thread and wait for the coroutine to finish
     //Coroutine2
-    runBlocking { // creates a coroutine that blocks the current Main thread
-        mySuspend(3000)
-    }
+     // creates a coroutine that blocks the current Main thread
+      //  mySuspend(3000)
+
+    //this join function will wait the coroutine to finish its execution
+    // then the next statement will be executed
+    job.join()
+
+    //get the number
+    val num = jobDeferred.await()
+    println(num)
+
 
     println("Main Program Ends: ${Thread.currentThread().name}")
 }
+
 
 suspend fun mySuspend(time:Long) {
 
